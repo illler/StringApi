@@ -3,7 +3,9 @@ package com.test.stringapi.services;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Component
 public class StringWrapperService {
@@ -28,7 +30,14 @@ public class StringWrapperService {
             result.compute(String.valueOf(processedString.charAt(i)), (t, count) -> count == null ? 1 : ++count);
         }
 
-        return result;
+        return result.entrySet().stream()
+                .sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        Map.Entry::getValue,
+                        (e1, e2) -> e1,
+                        LinkedHashMap::new
+                ));
     }
 
 
